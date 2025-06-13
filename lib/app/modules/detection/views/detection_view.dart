@@ -51,14 +51,11 @@ class DetectionView extends GetView<DetectionController> {
                 ],
               ),
               const SizedBox(height: 40),
-              Button(
-                onTap: () {
-                  controller.isMonitoring.value
-                      ? null
-                      : controller.initCapture();
-                },
-                text: "Grant Permission",
-              ),
+              Obx(() => Button(
+                onTap: controller.toggleCapture,
+                text: controller.isMonitoring.value ? "Stop Monitoring" : "Start Monitoring",
+              )),
+
             ],
           ),
         ),

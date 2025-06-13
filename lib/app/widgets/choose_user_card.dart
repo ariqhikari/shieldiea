@@ -15,8 +15,8 @@ class ChooseUserCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 165,
-      height: 150,
+      width: 155,
+      height: 130,
       decoration: BoxDecoration(
         border: Border.all(color: lightGreenColor, width: 3),
         borderRadius: BorderRadius.circular(10),
@@ -30,7 +30,7 @@ class ChooseUserCard extends StatelessWidget {
             onTap();
           },
           child: Padding(
-            padding: const EdgeInsets.all(30),
+            padding: const EdgeInsets.all(20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
