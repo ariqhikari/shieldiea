@@ -2,10 +2,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 // import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shieldiea/app/routes/app_pages.dart';
 
 class LoginController extends GetxController {
-  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> formKeyLogin = GlobalKey<FormState>();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   RxBool isLoading = false.obs;
@@ -27,7 +29,7 @@ class LoginController extends GetxController {
 
   // create login with firebase auth
   Future<void> loginWithFirebase() async {
-    if (formKey.currentState!.validate()) {
+    if (formKeyLogin.currentState!.validate()) {
       isLoading.value = true;
       try {
         // Import FirebaseAuth at the top: import 'package:firebase_auth/firebase_auth.dart';
@@ -40,11 +42,17 @@ class LoginController extends GetxController {
           password: password,
         );
 
+        final box = GetStorage();
+        box.write('dataParent', {
+          'email': emailController.text,
+          'password': passwordController.text,
+        });
+
         // Optionally get the Firebase Messaging token
         // await getToken();
 
         // Navigate to home on successful login
-        // Get.offNamed(Routes.HOME);
+        Get.offNamed(Routes.CHOOSE_USER);
       } on FirebaseAuthException catch (e) {
         String message = 'Login failed';
         if (e.code == 'user-not-found') {
@@ -55,6 +63,7 @@ class LoginController extends GetxController {
         Get.snackbar('Error', message);
       } catch (e) {
         Get.snackbar('Error', 'Login failed: $e');
+        print(e);
       } finally {
         isLoading.value = false;
       }

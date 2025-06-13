@@ -18,7 +18,7 @@ class LoginView extends GetView<LoginController> {
           children: [
             SingleChildScrollView(
               child: Form(
-                key: controller.formKey,
+                key: controller.formKeyLogin,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
@@ -50,12 +50,12 @@ class LoginView extends GetView<LoginController> {
                               ),
                               const SizedBox(height: 16),
                               Text(
-                                "Snailly",
+                                "Shieldiea",
                                 textAlign: TextAlign.center,
                                 style: headingPrimaryFontStyle,
                               ),
                               Text(
-                                "Safe browsing for the children",
+                                "Protecting Young Explorers Online",
                                 textAlign: TextAlign.center,
                                 style: headingSecondaryFontStyle,
                               ),
@@ -115,7 +115,8 @@ class LoginView extends GetView<LoginController> {
                           Button(
                             text: 'Login',
                             onTap: () async {
-                              if (controller.formKey.currentState!.validate()) {
+                              if (controller.formKeyLogin.currentState!
+                                  .validate()) {
                                 controller.loginWithFirebase();
                               }
                             },

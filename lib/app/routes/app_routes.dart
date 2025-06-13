@@ -10,6 +10,7 @@ abstract class Routes {
   static const CHOOSE_USER = _Paths.CHOOSE_USER;
   static const LOGIN_REPORT = _Paths.LOGIN_REPORT;
   static const CHOOSE_CHILD = _Paths.CHOOSE_CHILD;
+  static const MAIN = _Paths.MAIN;
 }
 
 abstract class _Paths {
@@ -21,4 +22,5 @@ abstract class _Paths {
   static const CHOOSE_USER = '/choose-user';
   static const LOGIN_REPORT = '/login-report';
   static const CHOOSE_CHILD = '/choose-child';
+  static const MAIN = '/main';
 }

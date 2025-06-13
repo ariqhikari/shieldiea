@@ -47,12 +47,12 @@ class SplashView extends GetView<SplashController> {
                         ),
                         const SizedBox(height: 16),
                         Text(
-                          "Snailly",
+                          "Shieldiea",
                           textAlign: TextAlign.center,
                           style: headingPrimaryFontStyle,
                         ),
                         Text(
-                          "Safe browsing for the children",
+                          "Protecting Young Explorers Online",
                           textAlign: TextAlign.center,
                           style: headingSecondaryFontStyle,
                         ),

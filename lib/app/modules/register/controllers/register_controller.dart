@@ -1,6 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:shieldiea/app/routes/app_pages.dart';
 
 class RegisterController extends GetxController {
@@ -25,8 +27,25 @@ class RegisterController extends GetxController {
           password: password,
         );
 
-        Get.offNamed(Routes.LOGIN);
+        // buatkan juga user profile di Firestore
+        final user = auth.currentUser;
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user!.uid)
+            .set({
+          'nama': namaController.text.trim(),
+          'email': email,
+        });
+
+        final box = GetStorage();
+        box.write('dataParent', {
+          'email': emailController.text,
+          'password': passwordController.text,
+        });
+
+        Get.offNamed(Routes.CHOOSE_USER);
       } catch (e) {
+        print("Error during registration: $e");
         Get.snackbar('Error', 'Registration failed: $e');
       } finally {
         isLoading.value = false;

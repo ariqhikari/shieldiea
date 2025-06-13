@@ -1,23 +1,63 @@
+import 'dart:developer'; // untuk log()
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:shieldiea/app/routes/app_pages.dart';
+import 'package:shieldiea/app/shared/shared.dart';
 
 class LoginReportController extends GetxController {
-  //TODO: Implement LoginReportController
-
-  final count = 0.obs;
-  @override
-  void onInit() {
-    super.onInit();
-  }
-
-  @override
-  void onReady() {
-    super.onReady();
-  }
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  final TextEditingController passwordController = TextEditingController();
+  RxBool isLoading = false.obs;
 
   @override
   void onClose() {
+    passwordController.dispose();
     super.onClose();
   }
 
-  void increment() => count.value++;
+  Future<void> loginToReportior() async {
+    final box = GetStorage();
+    final data = box.read("dataParent") as Map<String, dynamic>?;
+
+    if (data == null || !data.containsKey("password")) {
+      showSnackBar("Data parent not found");
+      return;
+    }
+
+    try {
+      isLoading.value = true;
+      if (passwordController.text == data["password"]) {
+        Get.offAndToNamed(Routes.MAIN);
+      } else {
+        showSnackBar("Wrong password");
+      }
+    } catch (e) {
+      showSnackBar("An error occurred: $e");
+      rethrow;
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<String?> getToken() async {
+    try {
+      String? token = await FirebaseMessaging.instance.getToken();
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('token_firebase', token!);
+      log("FCM $token");
+      return token;
+    } catch (e) {
+      log("Error getting FCM token: $e");
+      return null;
+    }
+  }
+
+  Future<void> checkLogin(String token) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('token', token);
+    log("Token stored: $token");
+  }
 }

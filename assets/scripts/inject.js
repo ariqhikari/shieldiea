@@ -129,7 +129,7 @@ function coverImages() {
         img.dataset.covered = "false";
         img.backgroundColor = "gray";
 
-        fetch("https://snailly.agrimate.software/predict-image", {
+        fetch("https://Shieldiea.agrimate.software/predict-image", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -192,7 +192,7 @@ function handleInteractionVideo() {
 if (
   !window.location.href.includes("tiktok.com") &&
   !window.location.href.includes("youtube.com") &&
-  !window.location.href.includes("snailly-block.netlify.app")
+  !window.location.href.includes("Shieldiea-block.netlify.app")
 ) {
   const events = [
     "scroll",
@@ -531,7 +531,7 @@ const chatbot = document.createElement("div");
 chatbot.className = "chatbot";
 chatbot.innerHTML = `
   <header>
-    <h2>Snailly Chatbot</h2>
+    <h2>Shieldiea Chatbot</h2>
   </header>
   <ul class="chatbox">
     <li class="chat incoming">
