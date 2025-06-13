@@ -13,7 +13,7 @@ void main() async {
   await dotenv.load(fileName: ".env");
   await GetStorage.init();
   await Firebase.initializeApp();
-  // await FirebaseApi().initNotifications();
+  await FirebaseApi().initNotifications();
   runApp(
     GetMaterialApp(
       title: "Shieldiea",

@@ -62,11 +62,7 @@ class ChooseChildView extends GetView<ChooseChildController> {
                       : Column(
                           children: [
                             controller.children.isEmpty
-                                ? Text(
-                                    "There is no child data.",
-                                    style: headingSecondaryFontStyle.copyWith(
-                                        color: blackColor),
-                                  )
+                                ? makeLoadingIndicator()
                                 : const SizedBox(),
                             for (var child in controller.children)
                               Container(
@@ -82,9 +78,7 @@ class ChooseChildView extends GetView<ChooseChildController> {
                                   borderRadius: BorderRadius.circular(12),
                                   child: InkWell(
                                     borderRadius: BorderRadius.circular(12),
-                                    onTap: () {
-                                      Get.offNamed(Routes.DETECTION);
-                                    },
+                                    onTap: controller.moveToDetection,
                                     child: Center(
                                       child: Text(
                                         (child.name).toUpperCase(),

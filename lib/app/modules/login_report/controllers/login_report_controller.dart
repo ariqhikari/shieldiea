@@ -1,4 +1,6 @@
 import 'dart:developer'; // untuk log()
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -11,6 +13,9 @@ class LoginReportController extends GetxController {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final TextEditingController passwordController = TextEditingController();
   RxBool isLoading = false.obs;
+
+  final _firestore = FirebaseFirestore.instance;
+  final _auth = FirebaseAuth.instance;
 
   @override
   void onClose() {
@@ -30,6 +35,17 @@ class LoginReportController extends GetxController {
     try {
       isLoading.value = true;
       if (passwordController.text == data["password"]) {
+        // update firestroe user token nya
+        String? token = await getToken();
+
+        final userId = _auth.currentUser?.uid;
+        if (userId == null) return;
+
+        await _firestore
+            .collection('users')
+            .doc(userId)
+            .update({'token_fcm': token});
+
         Get.offAndToNamed(Routes.MAIN);
       } else {
         showSnackBar("Wrong password");

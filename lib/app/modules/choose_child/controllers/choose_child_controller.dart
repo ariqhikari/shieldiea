@@ -8,6 +8,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shieldiea/app/data/child_model.dart';
+import 'package:shieldiea/app/routes/app_pages.dart';
 
 class ChooseChildController extends GetxController {
   final _auth = FirebaseAuth.instance;
@@ -19,20 +20,6 @@ class ChooseChildController extends GetxController {
   void onInit() async {
     super.onInit();
     await getChilds();
-
-    // Handle enable/disable calls from AccessibilityService
-    // _captureControlChannel.setMethodCallHandler((call) async {
-    //   switch (call.method) {
-    //     case 'enableCapture':
-    //       print("[DEBUG] enableCapture dipanggil");
-    //       await startStreaming();
-    //       break;
-    //     case 'disableCapture':
-    //       print("[DEBUG] disableCapture dipanggil");
-    //       stopStreaming();
-    //       break;
-    //   }
-    // });
   }
 
   Future<void> getChilds() async {
@@ -51,6 +38,26 @@ class ChooseChildController extends GetxController {
     children.value = snapshot.docs
         .map((doc) => ChildModel.fromMap(doc.id, doc.data()))
         .toList();
+  }
+
+  moveToDetection() async {
+    String? token = await getToken();
+
+    final userId = _auth.currentUser?.uid;
+    if (userId == null) return;
+
+    final snapshot = await _firestore
+        .collection('children')
+        .where('user_id', isEqualTo: userId)
+        .get();
+
+    for (var doc in snapshot.docs) {
+      await _firestore
+          .collection('children')
+          .doc(doc.id)
+          .update({'token_fcm': token});
+    }
+    Get.offNamed(Routes.DETECTION);
   }
 
   Future<String?> getToken() async {
