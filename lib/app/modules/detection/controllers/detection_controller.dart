@@ -90,12 +90,10 @@ class DetectionController extends GetxController {
       final jpeg = Uint8List.fromList(img.encodeJpg(preview));
 
       print("[DEBUG] Frame received: ${jpeg.length} bytes, $w x $h");
-      await sendNotification();
-      // _overlayControlChannel.invokeMethod('showOverlay');
-      // await uploadCapturedImage(jpeg);
+
+      await uploadCapturedImage(jpeg);
 
       lastJpeg.value = jpeg;
-
     } catch (e) {
       print("Error processing frame: $e");
     } finally {
@@ -104,12 +102,19 @@ class DetectionController extends GetxController {
   }
 
   Future<void> sendNotification() async {
-    final url = Uri.parse('https://balancebites.auroraweb.id/send-notification');
+    final url =
+        Uri.parse('https://balancebites.auroraweb.id/send-notification');
+
+    // get user fcm from firestore user
+    final userId = _auth.currentUser?.uid;
+    if (userId == null) return;
+    final doc = await _firestore.collection('users').doc(userId).get();
 
     final payload = {
-      "token": "dk-Muh8fQwWBgLPCdnnJnH:APA91bFlXkGHDXqyBwQesI7qG4U910Ix1g_NktGpdfI-lqYOkK8EGAZpCIszGZrREnfkB_AE-zwmYg2aZeqCv-0kfpGLwwJSO0pUjMO5eYXKw1rdHWeQ96k",
+      "token": doc.data()?['token_fcm'] ?? '',
       "title": "Konten Berbahaya Terdeteksi",
-      "body": "Shieldiea telah memblokir konten berbahaya di perangkat Anda."
+      "body":
+          "Anak Anda mungkin melihat konten yang tidak pantas. Silakan periksa.",
     };
 
     try {
@@ -152,7 +157,8 @@ class DetectionController extends GetxController {
 
     try {
       final httpClient = HttpClient()
-        ..badCertificateCallback = (X509Certificate cert, String host, int port) => true;
+        ..badCertificateCallback =
+            (X509Certificate cert, String host, int port) => true;
 
       final ioClient = IOClient(httpClient);
 
@@ -174,6 +180,7 @@ class DetectionController extends GetxController {
         if (responseBody.contains('danger')) {
           print('[DETECTION] Bahaya terdeteksi! Menampilkan overlay...');
           _overlayControlChannel.invokeMethod('showOverlay');
+          await sendNotification();
         } else {
           print('[DETECTION] Aman. Menghapus overlay jika ada.');
           _overlayControlChannel.invokeMethod('removeOverlay');

@@ -1,5 +1,7 @@
 import 'package:get/get.dart';
 
+import '../modules/action_parent/bindings/action_parent_binding.dart';
+import '../modules/action_parent/views/action_parent_view.dart';
 import '../modules/choose_child/bindings/choose_child_binding.dart';
 import '../modules/choose_child/views/choose_child_view.dart';
 import '../modules/choose_user/bindings/choose_user_binding.dart';
@@ -78,6 +80,11 @@ class AppPages {
       name: _Paths.DETECTION,
       page: () => const DetectionView(),
       binding: DetectionBinding(),
+    ),
+    GetPage(
+      name: _Paths.ACTION_PARENT,
+      page: () => const ActionParentView(),
+      binding: ActionParentBinding(),
     ),
   ];
 }

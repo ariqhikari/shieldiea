@@ -13,6 +13,7 @@ abstract class Routes {
   static const MAIN = _Paths.MAIN;
   static const SETTING = _Paths.SETTING;
   static const DETECTION = _Paths.DETECTION;
+  static const ACTION_PARENT = _Paths.ACTION_PARENT;
 }
 
 abstract class _Paths {
@@ -27,4 +28,5 @@ abstract class _Paths {
   static const MAIN = '/main';
   static const SETTING = '/setting';
   static const DETECTION = '/detection';
+  static const ACTION_PARENT = '/action-parent';
 }
