@@ -22,6 +22,8 @@ class ChooseChildController extends GetxController {
   final _firestore = FirebaseFirestore.instance;
   final children = <ChildModel>[].obs;
   var isLoading = false.obs;
+  var isUploading = false.obs;
+
 
   @override
   void onInit() async {
@@ -106,7 +108,15 @@ class ChooseChildController extends GetxController {
 
   Future<void> _processFrame(dynamic rawData) async {
     if (rawData is! Map) return;
+
+    if (isUploading.value) {
+      print('[DEBUG] Skip frame karena masih upload...');
+      return;
+    }
+
     try {
+      isUploading.value = true;
+
       final rawMap = Map<String, dynamic>.from(rawData);
       final bytes = rawMap['bytes'] as Uint8List;
       final meta = Map<String, dynamic>.from(rawMap['metadata']);
@@ -125,16 +135,16 @@ class ChooseChildController extends GetxController {
 
       print("[DEBUG] Frame received: ${jpeg.length} bytes, $w x $h");
 
-      uploadCapturedImage(jpeg);
-
-      // Demo logic: always block with overlay
-      await _overlayControlChannel.invokeMethod('showOverlay');
+      await uploadCapturedImage(jpeg); // tunggu upload selesai
 
       lastJpeg.value = jpeg;
     } catch (e) {
       print("Error processing frame: $e");
+    } finally {
+      isUploading.value = false;
     }
   }
+
 
   Future<void> uploadCapturedImage(Uint8List imageBytes) async {
     final uri = Uri.parse('https://balancebites.auroraweb.id/analyze');
