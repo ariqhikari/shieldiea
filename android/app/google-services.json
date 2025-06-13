@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "946248955465",
+    "project_id": "shieldiea",
+    "storage_bucket": "shieldiea.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:946248955465:android:5164dd9bd7e711ff45b198",
+        "android_client_info": {
+          "package_name": "com.codelabs.shieldiea"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBh0zeojy6mrPnrPQgDlPsNMogZo_RXLLs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
