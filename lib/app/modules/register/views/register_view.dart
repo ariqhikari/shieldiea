@@ -151,6 +151,7 @@ class RegisterView extends GetView<RegisterController> {
                             onTap: () async {
                               if (controller.formKey.currentState!.validate()) {
                                 // controller.registerAccountParent();
+                                controller.registerWithFirebase();
                               }
                             },
                           ),
