@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -14,17 +15,15 @@ import 'package:http_parser/http_parser.dart';
 class DetectionController extends GetxController {
   final _firestore = FirebaseFirestore.instance;
   final _auth = FirebaseAuth.instance;
+  final _sc = ScreenCapture();
 
+  StreamSubscription? _subscription;
+  var isMonitoring = false.obs;
+  var lastJpeg = Rxn<Uint8List>();
   var isUploading = false.obs;
 
   static const _captureControlChannel = MethodChannel('screen_capture');
   static const _overlayControlChannel = MethodChannel('overlay_control');
-
-  final _sc = ScreenCapture();
-  StreamSubscription? _subscription;
-
-  var isMonitoring = false.obs;
-  var lastJpeg = Rxn<Uint8List>();
 
   @override
   void onClose() {
@@ -32,23 +31,34 @@ class DetectionController extends GetxController {
     super.onClose();
   }
 
+  Future<void> toggleCapture() async {
+    if (isMonitoring.value) {
+      stopStreaming();
+    } else {
+      await initCapture();
+    }
+  }
+
   Future<void> initCapture() async {
     bool ok = await _sc.requestPermission();
     if (!ok) return;
 
-    print("[DEBUG] Permission granted. Waiting for enableCapture...");
+    print("[DEBUG] Permission granted. Starting capture...");
     startStreaming();
-  }
-
-  Future<void> requestCapturePermission() async {
-    final ok = await _sc.requestPermission();
-    if (!ok) return;
-    isMonitoring.value = true;
   }
 
   Future<void> startStreaming() async {
     if (_subscription != null) return;
     _subscription = _sc.frameStream.listen(_processFrame);
+    isMonitoring.value = true;
+  }
+
+  void stopStreaming() {
+    _subscription?.cancel();
+    _subscription = null;
+    _overlayControlChannel.invokeMethod('removeOverlay');
+    isMonitoring.value = false;
+    lastJpeg.value = null;
   }
 
   Future<void> _processFrame(dynamic rawData) async {
@@ -79,10 +89,11 @@ class DetectionController extends GetxController {
       final jpeg = Uint8List.fromList(img.encodeJpg(preview));
 
       print("[DEBUG] Frame received: ${jpeg.length} bytes, $w x $h");
-
-      await uploadCapturedImage(jpeg); // tunggu upload selesai
+      _overlayControlChannel.invokeMethod('showOverlay');
+      // await uploadCapturedImage(jpeg);
 
       lastJpeg.value = jpeg;
+
     } catch (e) {
       print("Error processing frame: $e");
     } finally {
@@ -100,16 +111,8 @@ class DetectionController extends GetxController {
 
     if (doc.exists) {
       final data = doc.data()!;
-      if (data['enable_porn'] == true) {
-        url += 'enablePorn=true&';
-      } else {
-        url += 'enablePorn=false&';
-      }
-      if (data['enable_kekerasan'] == true) {
-        url += 'enableKekerasan=true&';
-      } else {
-        url += 'enableKekerasan=false';
-      }
+      url += 'enablePorn=${data['enable_porn'] == true}&';
+      url += 'enableKekerasan=${data['enable_kekerasan'] == true}';
     }
 
     final uri = Uri.parse(url);
@@ -118,9 +121,7 @@ class DetectionController extends GetxController {
 
     try {
       final httpClient = HttpClient()
-        ..badCertificateCallback =
-            (X509Certificate cert, String host, int port) =>
-                true; // abaikan SSL error
+        ..badCertificateCallback = (X509Certificate cert, String host, int port) => true;
 
       final ioClient = IOClient(httpClient);
 
@@ -137,19 +138,20 @@ class DetectionController extends GetxController {
       if (streamedResponse.statusCode == 200) {
         final responseBody = await streamedResponse.stream.bytesToString();
         print('[UPLOAD] Berhasil: $responseBody');
+
+        // Cek apakah hasilnya "danger"
+        if (responseBody.contains('danger')) {
+          print('[DETECTION] Bahaya terdeteksi! Menampilkan overlay...');
+          _overlayControlChannel.invokeMethod('showOverlay');
+        } else {
+          print('[DETECTION] Aman. Menghapus overlay jika ada.');
+          _overlayControlChannel.invokeMethod('removeOverlay');
+        }
       } else {
         print('[UPLOAD] Gagal: ${streamedResponse.statusCode}');
       }
     } catch (e) {
       print('[UPLOAD] Error: $e');
     }
-  }
-
-  void stopStreaming() {
-    _subscription?.cancel();
-    _subscription = null;
-    _overlayControlChannel.invokeMethod('removeOverlay');
-    isMonitoring.value = false;
-    lastJpeg.value = null;
   }
 }

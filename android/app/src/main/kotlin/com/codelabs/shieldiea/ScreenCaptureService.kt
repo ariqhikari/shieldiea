@@ -58,10 +58,7 @@ class ScreenCaptureService: Service() {
       overlayView = LayoutInflater.from(this)
         .inflate(R.layout.overlay_layout, null)
 
-      // Cari tombol unblock dan set listener
-      overlayView?.findViewById<Button>(R.id.btn_unblock)?.setOnClickListener {
-        removeOverlay()
-      }
+
 
       createNotificationChannel()
       startForeground(NOTIF_ID, makeNotification())
