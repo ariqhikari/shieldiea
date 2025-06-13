@@ -12,6 +12,7 @@ abstract class Routes {
   static const CHOOSE_CHILD = _Paths.CHOOSE_CHILD;
   static const MAIN = _Paths.MAIN;
   static const SETTING = _Paths.SETTING;
+  static const DETECTION = _Paths.DETECTION;
 }
 
 abstract class _Paths {
@@ -25,4 +26,5 @@ abstract class _Paths {
   static const CHOOSE_CHILD = '/choose-child';
   static const MAIN = '/main';
   static const SETTING = '/setting';
+  static const DETECTION = '/detection';
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
+import 'package:shieldiea/app/routes/app_pages.dart';
 import 'package:shieldiea/app/shared/shared.dart';
 import 'package:shieldiea/app/widgets/widgets.dart';
 
@@ -82,7 +83,7 @@ class ChooseChildView extends GetView<ChooseChildController> {
                                   child: InkWell(
                                     borderRadius: BorderRadius.circular(12),
                                     onTap: () {
-                                      controller.initCapture();
+                                      Get.offNamed(Routes.DETECTION);
                                     },
                                     child: Center(
                                       child: Text(

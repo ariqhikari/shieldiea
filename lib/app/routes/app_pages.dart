@@ -4,6 +4,8 @@ import '../modules/choose_child/bindings/choose_child_binding.dart';
 import '../modules/choose_child/views/choose_child_view.dart';
 import '../modules/choose_user/bindings/choose_user_binding.dart';
 import '../modules/choose_user/views/choose_user_view.dart';
+import '../modules/detection/bindings/detection_binding.dart';
+import '../modules/detection/views/detection_view.dart';
 import '../modules/home/bindings/home_binding.dart';
 import '../modules/home/views/home_view.dart';
 import '../modules/login/bindings/login_binding.dart';
@@ -71,6 +73,11 @@ class AppPages {
       name: _Paths.SETTING,
       page: () => const SettingView(),
       binding: SettingBinding(),
+    ),
+    GetPage(
+      name: _Paths.DETECTION,
+      page: () => const DetectionView(),
+      binding: DetectionBinding(),
     ),
   ];
 }
