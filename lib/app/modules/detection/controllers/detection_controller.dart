@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -89,7 +90,8 @@ class DetectionController extends GetxController {
       final jpeg = Uint8List.fromList(img.encodeJpg(preview));
 
       print("[DEBUG] Frame received: ${jpeg.length} bytes, $w x $h");
-      _overlayControlChannel.invokeMethod('showOverlay');
+      await sendNotification();
+      // _overlayControlChannel.invokeMethod('showOverlay');
       // await uploadCapturedImage(jpeg);
 
       lastJpeg.value = jpeg;
@@ -98,6 +100,35 @@ class DetectionController extends GetxController {
       print("Error processing frame: $e");
     } finally {
       isUploading.value = false;
+    }
+  }
+
+  Future<void> sendNotification() async {
+    final url = Uri.parse('https://balancebites.auroraweb.id/send-notification');
+
+    final payload = {
+      "token": "dk-Muh8fQwWBgLPCdnnJnH:APA91bFlXkGHDXqyBwQesI7qG4U910Ix1g_NktGpdfI-lqYOkK8EGAZpCIszGZrREnfkB_AE-zwmYg2aZeqCv-0kfpGLwwJSO0pUjMO5eYXKw1rdHWeQ96k",
+      "title": "Konten Berbahaya Terdeteksi",
+      "body": "Shieldiea telah memblokir konten berbahaya di perangkat Anda."
+    };
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode(payload),
+      );
+
+      if (response.statusCode == 200) {
+        print('[NOTIF] Berhasil mengirim notifikasi.');
+      } else {
+        print('[NOTIF] Gagal: ${response.statusCode}');
+        print('[NOTIF] Response: ${response.body}');
+      }
+    } catch (e) {
+      print('[NOTIF] Error: $e');
     }
   }
 
