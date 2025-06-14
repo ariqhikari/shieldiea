@@ -1,5 +1,7 @@
 # Shieldiea - Protecting Young Explorers Online
 
+![banner](https://github.com/user-attachments/assets/f3decc51-2abc-4157-be26-3e47bd7022bd)
+
 **Shieldiea** is a mobile application built with Flutter that enables parents to monitor their child's screen activity in real-time. The app captures screen frames, analyzes content using AI to detect inappropriate material, and overlays a block screen when necessary. It also provides activity reports and notifications to help parents maintain a safe digital environment for their children.
 
 ## 🌟 Features
